@@ -89,12 +89,11 @@ function love.update()
 	end
 
 	if love.keyboard.isDown("-") then
-		zoom_level = 0.5
-	--//zoom_level * 0.9
+		zoom_level = zoom_level * 0.9 -- or 0.5
 	end
 
 	if love.keyboard.isDown("=") then
-		zoom_level = 2 --zoom_level * 1.1
+		zoom_level = zoom_level * 1.1 -- or 2
 	end
 
 	if love.keyboard.isDown("0") then
