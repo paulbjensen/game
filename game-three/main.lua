@@ -1,51 +1,117 @@
-dirt = love.graphics.newImage("dirt2.png")
-grass = love.graphics.newImage("grass4.png")
+-- Image files for grass and dirt
+-- the image files are 64 pixels wide and 32 pixels high
+local dirt = love.graphics.newImage("dirt2.png")
+local grass = love.graphics.newImage("grass4.png")
+local roadltr = love.graphics.newImage("road-left-to-right.png")
+local roadrtl = love.graphics.newImage("road-right-to-left.png")
+local crossroad = love.graphics.newImage("crossroad.png")
+local signpost = love.graphics.newImage("signpost.png")
+love.window.setTitle('Shop Tycoon')
+love.window.setMode(1200, 800, {resizable = true})
 
-function love.load()
+local tileset = { grass, dirt, roadltr, roadrtl, crossroad, signpost }
 
-	window_width = 800
-	window_height = 600
+-- window dimensions
+local window_width, window_height = love.graphics.getDimensions()
 
-	block_width = grass:getWidth()
-	block_height = grass:getHeight()
-	block_depth = block_height --/ 2 // No need - graphics are already isometric
-	
-	grid_size = 10
-	
-	-- Where the grid x,y coordinates the center
-	grid_x = 360
-	grid_y = 300
+-- blocks, calculated based on an image's width and height
+local block_width = grass:getWidth()
+local block_height = grass:getHeight()
 
- 
-	grid = {}
-	for x = 1,grid_size do
-		grid[x] = {}
-		for y = 1,grid_size do
-			grid[x][y] = 1
+local block_dimension = -1 * block_width
+
+-- the grid of tiles that we render to the screen
+local grid_size = 20
+local grid_x = (window_width / 2) - block_width --((window_width - (block_dimension * grid_size) ) / 4) --370
+local grid_y = (window_height / 2) - block_height
+
+local camera_offset = {}
+local zoom_level = 1
+camera_offset.x = 0
+camera_offset.y = 0
+
+-- here we populate the grid to indicate what kind of tile we want to load at 
+-- which coordinate
+local grid = {}
+for x = 1,grid_size do
+	grid[x] = {}
+	for y = 1,grid_size do
+		grid[x][y] = { 1 }
+
+		if (x == 4) then
+			grid[x][y] = {3}
 		end
+
+		if (y == 8) then
+			grid[x][y] = {4}
+		end
+
+		if (x == 4 and y == 8) then
+			grid[x][y] = {5}
+		end
+
 	end
-	
-	grid[2][4] = 2
-	grid[6][5] = 2
-	
 end
 
+-- This draws a 2x3 grid of dirt
+grid[2][3] = {2,6}
+grid[2][4] = {2,6}
+grid[2][5] = {2,6}
+grid[3][3] = {2,6}
+grid[3][4] = {2,6}
+grid[3][5] = {2,6}
+
+-- this draws the tile image at the grid coordinate
 function draw_tile(image, x, y)
 	love.graphics.draw(image,
 	grid_x + ((y-x) * (block_width / 2)),
-	grid_y + ((x+y) * (block_depth / 2)) - (block_depth * (grid_size / 2)))
+	grid_y + ((x+y) * (block_height / 2)) - (block_height * (grid_size / 2)))
+end
+
+function love.update()
+	window_width, window_height = love.graphics.getDimensions()
+	grid_x = (window_width / 2) - 32 --((window_width - (block_dimension * grid_size) ) / 4) --370
+	grid_y = (window_height / 2) - 32
+
+	if love.keyboard.isDown("right") then
+		camera_offset.x = camera_offset.x - 10
+	end
+	if love.keyboard.isDown("left") then
+		camera_offset.x = camera_offset.x + 10
+	end
+
+	if love.keyboard.isDown("up") then
+		camera_offset.y = camera_offset.y + 10
+	end
+	if love.keyboard.isDown("down") then
+		camera_offset.y = camera_offset.y - 10
+	end
+
+	if love.keyboard.isDown("-") then
+		zoom_level = zoom_level * 0.9
+	end
+
+	if love.keyboard.isDown("=") then
+		zoom_level = zoom_level * 1.1
+	end
+
+	if love.keyboard.isDown("0") then
+		zoom_level = 1.0
+	end
+
 end
 
 function love.draw()
-
-
-
+	love.graphics.scale( zoom_level, zoom_level )
+	love.graphics.translate(camera_offset.x * zoom_level, camera_offset.y * zoom_level)
 	for x = 1,grid_size do
 		for y = 1,grid_size do
-			if grid[x][y] == 1 then
-				draw_tile(grass, x, y)
-			else -- grid[x][y] == 2
-				draw_tile(dirt, x, y)
+			local tiles = grid[x][y]
+			for z=1, #tiles do
+				local tile = tileset[tiles[z]]
+				if (tile) then
+					draw_tile(tile, x, y)
+				end
 			end
 		end
 	end
