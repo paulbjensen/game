@@ -22,8 +22,8 @@ local block_dimension = -1 * block_width
 
 -- the grid of tiles that we render to the screen
 local grid_size = 20
-local grid_x = (window_width / 2) - block_width --((window_width - (block_dimension * grid_size) ) / 4) --370
-local grid_y = (window_height / 2) - block_height
+local grid_x = (window_width / 2) - (block_width / 2)
+local grid_y = (window_height / 2) - (block_height / 2) -- I think this is slightly knocking if off center on zoom
 
 local camera_offset = {}
 local zoom_level = 1
@@ -64,14 +64,14 @@ grid[3][5] = {2,6}
 -- this draws the tile image at the grid coordinate
 function draw_tile(image, x, y)
 	love.graphics.draw(image,
-	grid_x + ((y-x) * (block_width / 2)),
-	grid_y + ((x+y) * (block_height / 2)) - (block_height * (grid_size / 2)))
+	(grid_x / zoom_level) + ((y-x) * (block_width / 2)),
+	(grid_y / zoom_level) + ((x+y) * (block_height / 2)) - (block_height * (grid_size / 2)))
 end
 
 function love.update()
 	window_width, window_height = love.graphics.getDimensions()
-	grid_x = (window_width / 2) - 32 --((window_width - (block_dimension * grid_size) ) / 4) --370
-	grid_y = (window_height / 2) - 32
+	grid_x = (window_width / 2) - (block_width/2)
+	grid_y = (window_height / 2) - (block_height/2)
 
 	if love.keyboard.isDown("right") then
 		camera_offset.x = camera_offset.x - 10
@@ -88,11 +88,11 @@ function love.update()
 	end
 
 	if love.keyboard.isDown("-") then
-		zoom_level = zoom_level * 0.9
+		zoom_level = 0.5--//zoom_level * 0.9
 	end
 
 	if love.keyboard.isDown("=") then
-		zoom_level = zoom_level * 1.1
+		zoom_level = 2 --zoom_level * 1.1
 	end
 
 	if love.keyboard.isDown("0") then
@@ -102,8 +102,8 @@ function love.update()
 end
 
 function love.draw()
-	love.graphics.scale( zoom_level, zoom_level )
-	love.graphics.translate(camera_offset.x * zoom_level, camera_offset.y * zoom_level)
+	love.graphics.scale( zoom_level )
+	love.graphics.translate(camera_offset.x, camera_offset.y)
 	for x = 1,grid_size do
 		for y = 1,grid_size do
 			local tiles = grid[x][y]
