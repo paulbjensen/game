@@ -36,4 +36,9 @@ function Camera:move_down(factor)
     self.offset.y = self.offset.y - factor
 end
 
+function Camera:apply()
+    love.graphics.scale(self.zoom_level)
+    love.graphics.translate(self.offset.x, self.offset.y)
+end
+
 return Camera

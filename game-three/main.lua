@@ -2,44 +2,43 @@
 local Camera = require("lib.camera")
 local Tileset = require("lib.tileset")
 local Map = require("lib.map")
+local Canvas = require("lib.canvas")
 
 -- Window settings
 love.window.setTitle("Shop Tycoon")
 love.window.setMode(1200, 800, {resizable = true})
-local window_width, window_height = love.graphics.getDimensions()
 
--- Tile and map settings
+-- Tileset, Map and Camera instantiation
 local tileset = Tileset()
 local map = Map()
+local camera = Camera()
+local canvas = Canvas()
 
 -- Initialises the map with populated values for the grid
 map:populate()
 
--- map grid settings
-local grid_x = (window_width / 2) - (tileset.block_width / 2)
-local grid_y = (window_height / 2) - (tileset.block_height / 2)
-
--- Camera and zoom level settings
-local camera = Camera()
+-- determines where to render the grid based on tileset and camera settings
+canvas:apply(tileset, camera)
 
 -- Renders a tile for the map grid coordinate
+-- grid_x
+-- grid_y
+-- tileset
+-- map
+-- camera
 function draw_tile(image, x, y)
 	love.graphics.draw(
 		image,
-		(grid_x / camera.zoom_level) + ((y - x) * (tileset.block_width / 2)),
-		(grid_y / camera.zoom_level) + ((x + y) * (tileset.block_height / 2)) - (tileset.block_height * (map.grid_size / 2))
+		(canvas.grid_x / camera.zoom_level) + ((y - x) * (tileset.block_width / 2)),
+		(canvas.grid_y / camera.zoom_level) + ((x + y) * (tileset.block_height / 2)) -
+			(tileset.block_height * (map.grid_size / 2))
 	)
 end
 
-function love.update(deltaTime)
-	local factor = (500 * deltaTime)
-	window_width, window_height = love.graphics.getDimensions()
-	grid_x = (window_width / 2) - ((tileset.block_width / 2) * camera.zoom_level)
-	grid_y = (window_height / 2) - ((tileset.block_height / 2) * camera.zoom_level)
+-- NOTE - would be nice to have some kind of key mapping table instead of multiple if statements
+-- seems like it will not save many lines of code at all
 
-	-- NOTE - would be nice to have some kind of key mapping table instead of multiple if statements
-	-- seems like it will not save many lines of code at all
-
+function apply_keyboard_bindings(factor)
 	-- pans the camera to the right
 	if love.keyboard.isDown("right") then
 		camera:move_right(factor)
@@ -76,9 +75,16 @@ function love.update(deltaTime)
 	end
 end
 
+function love.update(deltaTime)
+	local factor = (500 * deltaTime)
+	canvas:apply(tileset, camera)
+	apply_keyboard_bindings(factor)
+end
+
 function love.draw()
-	love.graphics.scale(camera.zoom_level)
-	love.graphics.translate(camera.offset.x, camera.offset.y)
+	camera:apply()
+
+	-- map and tileset
 	for x = 1, map.grid_size do
 		for y = 1, map.grid_size do
 			local tiles = map.grid[x][y]
