@@ -1,6 +1,6 @@
 -- tiles and tileset
-local tileset = require("lib.tileset")
 local Camera = require("lib.camera")
+local Tileset = require("lib.tileset")
 
 -- Window settings
 love.window.setTitle("Shop Tycoon")
@@ -8,13 +8,12 @@ love.window.setMode(1200, 800, {resizable = true})
 local window_width, window_height = love.graphics.getDimensions()
 
 -- Tile and map settings
-local block_width = tileset[1]:getWidth()
-local block_height = tileset[1]:getHeight()
+local tileset = Tileset()
 
 -- map grid settings
 local grid_size = 20
-local grid_x = (window_width / 2) - (block_width / 2)
-local grid_y = (window_height / 2) - (block_height / 2)
+local grid_x = (window_width / 2) - (tileset.block_width / 2)
+local grid_y = (window_height / 2) - (tileset.block_height / 2)
 
 -- Camera and zoom level settings
 local camera = Camera()
@@ -55,16 +54,18 @@ end
 function draw_tile(image, x, y)
 	love.graphics.draw(
 		image,
-		(grid_x / camera.zoom_level) + ((y - x) * (block_width / 2)),
-		(grid_y / camera.zoom_level) + ((x + y) * (block_height / 2)) - (block_height * (grid_size / 2))
+		(grid_x / camera.zoom_level) + ((y - x) * (tileset.block_width / 2)),
+		(grid_y / camera.zoom_level) + ((x + y) * (tileset.block_height / 2)) - (tileset.block_height * (grid_size / 2))
 	)
 end
 
 function love.update(deltaTime)
 	local factor = (500 * deltaTime)
 	window_width, window_height = love.graphics.getDimensions()
-	grid_x = (window_width / 2) - ((block_width / 2) * camera.zoom_level)
-	grid_y = (window_height / 2) - ((block_height / 2) * camera.zoom_level)
+	grid_x = (window_width / 2) - ((tileset.block_width / 2) * camera.zoom_level)
+	grid_y = (window_height / 2) - ((tileset.block_height / 2) * camera.zoom_level)
+
+	-- NOTE - would be nice to have some kind of key mapping table instead of multiple if statments
 
 	-- pans the camera to the right
 	if love.keyboard.isDown("right") then
@@ -109,8 +110,9 @@ function love.draw()
 		for y = 1, grid_size do
 			local tiles = grid[x][y]
 			for z = 1, #tiles do
-				if (tileset[tiles[z]]) then
-					draw_tile(tileset[tiles[z]], x, y)
+				-- find a better way to name the variables here
+				if (tileset.tiles[tiles[z]]) then
+					draw_tile(tileset.tiles[tiles[z]], x, y)
 				end
 			end
 		end
