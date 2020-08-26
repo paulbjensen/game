@@ -16,4 +16,27 @@ function Canvas:apply(tileset, camera)
     self.grid_y = (self.window_height / 2) - ((tileset.block_height) * camera.zoom_level)
 end
 
+function Canvas:draw_tile(image, x, y, camera, tileset, map)
+    love.graphics.draw(
+        image,
+        (self.grid_x / camera.zoom_level) + ((y - x) * (tileset.block_width / 2)),
+        (self.grid_y / camera.zoom_level) + ((x + y) * (tileset.block_height / 2)) -
+            (tileset.block_height * (map.grid_size / 2))
+    )
+end
+
+function Canvas:draw(map, tileset, camera)
+    for x = 1, map.grid_size do
+        for y = 1, map.grid_size do
+            local tiles = map.grid[x][y]
+            for z = 1, #tiles do
+                -- find a better way to name the variables here
+                if (tileset.tiles[tiles[z]]) then
+                    self:draw_tile(tileset.tiles[tiles[z]], x, y, camera, tileset, map)
+                end
+            end
+        end
+    end
+end
+
 return Canvas

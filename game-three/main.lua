@@ -20,21 +20,6 @@ map:populate()
 -- determines where to render the grid based on tileset and camera settings
 canvas:apply(tileset, camera)
 
--- Renders a tile for the map grid coordinate
--- grid_x
--- grid_y
--- tileset
--- map
--- camera
-function draw_tile(image, x, y)
-	love.graphics.draw(
-		image,
-		(canvas.grid_x / camera.zoom_level) + ((y - x) * (tileset.block_width / 2)),
-		(canvas.grid_y / camera.zoom_level) + ((x + y) * (tileset.block_height / 2)) -
-			(tileset.block_height * (map.grid_size / 2))
-	)
-end
-
 -- NOTE - would be nice to have some kind of key mapping table instead of multiple if statements
 -- seems like it will not save many lines of code at all
 
@@ -83,17 +68,5 @@ end
 
 function love.draw()
 	camera:apply()
-
-	-- map and tileset
-	for x = 1, map.grid_size do
-		for y = 1, map.grid_size do
-			local tiles = map.grid[x][y]
-			for z = 1, #tiles do
-				-- find a better way to name the variables here
-				if (tileset.tiles[tiles[z]]) then
-					draw_tile(tileset.tiles[tiles[z]], x, y)
-				end
-			end
-		end
-	end
+	canvas:draw(map, tileset, camera)
 end
