@@ -1,6 +1,7 @@
 -- tiles and tileset
 local Camera = require("lib.camera")
 local Tileset = require("lib.tileset")
+local Map = require("lib.map")
 
 -- Window settings
 love.window.setTitle("Shop Tycoon")
@@ -9,53 +10,24 @@ local window_width, window_height = love.graphics.getDimensions()
 
 -- Tile and map settings
 local tileset = Tileset()
+local map = Map()
+
+-- Initialises the map with populated values for the grid
+map:populate()
 
 -- map grid settings
-local grid_size = 20
 local grid_x = (window_width / 2) - (tileset.block_width / 2)
 local grid_y = (window_height / 2) - (tileset.block_height / 2)
 
 -- Camera and zoom level settings
 local camera = Camera()
 
--- Create the grid map
-local grid = {}
-
--- this draws the initial grid map
-for x = 1, grid_size do
-	grid[x] = {}
-	for y = 1, grid_size do
-		-- sets the tile as grass
-		grid[x][y] = {1}
-
-		-- sets the tile as road (left to right)
-		if (x == 4) then
-			grid[x][y] = {3}
-		end
-
-		-- sets the tile as road (right to left)
-		if (y == 8) then
-			grid[x][y] = {4}
-		end
-
-		-- sets the tile as crossroad
-		if (x == 4 and y == 8) then
-			grid[x][y] = {5}
-		end
-
-		-- sets the tile as dirt, and then signpost
-		if (x >= 2 and x <= 3 and y >= 3 and y <= 5) then
-			grid[x][y] = {2, 6}
-		end
-	end
-end
-
 -- Renders a tile for the map grid coordinate
 function draw_tile(image, x, y)
 	love.graphics.draw(
 		image,
 		(grid_x / camera.zoom_level) + ((y - x) * (tileset.block_width / 2)),
-		(grid_y / camera.zoom_level) + ((x + y) * (tileset.block_height / 2)) - (tileset.block_height * (grid_size / 2))
+		(grid_y / camera.zoom_level) + ((x + y) * (tileset.block_height / 2)) - (tileset.block_height * (map.grid_size / 2))
 	)
 end
 
@@ -65,7 +37,8 @@ function love.update(deltaTime)
 	grid_x = (window_width / 2) - ((tileset.block_width / 2) * camera.zoom_level)
 	grid_y = (window_height / 2) - ((tileset.block_height / 2) * camera.zoom_level)
 
-	-- NOTE - would be nice to have some kind of key mapping table instead of multiple if statments
+	-- NOTE - would be nice to have some kind of key mapping table instead of multiple if statements
+	-- seems like it will not save many lines of code at all
 
 	-- pans the camera to the right
 	if love.keyboard.isDown("right") then
@@ -106,9 +79,9 @@ end
 function love.draw()
 	love.graphics.scale(camera.zoom_level)
 	love.graphics.translate(camera.offset.x, camera.offset.y)
-	for x = 1, grid_size do
-		for y = 1, grid_size do
-			local tiles = grid[x][y]
+	for x = 1, map.grid_size do
+		for y = 1, map.grid_size do
+			local tiles = map.grid[x][y]
 			for z = 1, #tiles do
 				-- find a better way to name the variables here
 				if (tileset.tiles[tiles[z]]) then
