@@ -3,8 +3,8 @@
 local Object = require "lib.helpers.classic"
 local Map = Object:extend()
 
-function Map:new()
-    self.grid_size = 20
+function Map:new(grid_size)
+    self.grid_size = grid_size or 20
     self.grid = {}
 end
 
