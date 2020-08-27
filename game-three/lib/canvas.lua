@@ -25,6 +25,21 @@ function Canvas:draw_tile(image, x, y, camera, tileset, map)
     )
 end
 
+-- Base off of the draw tile - work in progress
+function Canvas:highlightGridItemFromMouseCoord(x , y, width, height, camera)
+    local vertices = {
+        x,
+        y - (height / 2),
+        x + (width / 2),
+        y,
+        x,
+        y + (height / 2),
+        x - (width / 2),
+        y
+    }
+    love.graphics.polygon("line",vertices)
+end
+
 function Canvas:draw(map, tileset, camera)
     for x = 1, map.grid_size do
         for y = 1, map.grid_size do

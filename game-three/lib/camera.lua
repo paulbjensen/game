@@ -50,7 +50,6 @@ function Camera:center()
 end
 
 -- Note - might be worth putting these into a Mouse class
-
 function Camera:getMousePosition()
 	local mouse_x, mouse_y = love.mouse.getPosition()
 	local actual_mouse_x = (mouse_x / self.zoom_level) - self.offset.x
