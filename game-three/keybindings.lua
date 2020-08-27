@@ -1,3 +1,8 @@
+--[[
+    This is a set of keybindings that feel like game-specific configuration
+    rather than a file to put in the lib directory
+]]
+
 function keybindings(keyboard, camera)
     keyboard:add(
         "right",
@@ -24,6 +29,13 @@ function keybindings(keyboard, camera)
         "down",
         function(f)
             camera:move_down(f)
+        end
+    )
+
+    keyboard:add(
+        "c",
+        function()
+            camera:center()
         end
     )
 

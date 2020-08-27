@@ -25,12 +25,14 @@ map:populate()
 -- determines where to render the grid based on tileset and camera settings
 canvas:apply(tileset, camera)
 
+-- applies any keyboard key presses and canvas alterations
 function love.update(deltaTime)
 	local factor = (500 * deltaTime)
 	canvas:apply(tileset, camera)
 	keyboard:apply(factor)
 end
 
+-- applies the camera settings and draws the canvas
 function love.draw()
 	camera:apply()
 	canvas:draw(map, tileset, camera)
