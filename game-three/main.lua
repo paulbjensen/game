@@ -36,4 +36,5 @@ end
 function love.draw()
 	camera:apply()
 	canvas:draw(map, tileset, camera)
+	camera:displayMousePosition()
 end
