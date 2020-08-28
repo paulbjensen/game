@@ -40,5 +40,5 @@ function love.draw()
 	local coords = camera:getMousePosition()
 	local width = 64 --/ camera.zoom_level
 	local height = 32 --/ camera.zoom_level
-	canvas:highlightGridItemFromMouseCoord(coords[1],coords[2],width, height, camera)
+	canvas:highlightGridItemFromMouseCoord(coords[1], coords[2], width, height, camera, tileset, map)
 end
