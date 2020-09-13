@@ -31,8 +31,33 @@ function Canvas:draw_tile(image, x, y, camera, tileset, map)
         (self.grid_y / camera.zoom_level) + ((x + y) * (tileset.block_height / 2)) -
         (tileset.block_height * (map.grid_size / 2))
     love.graphics.draw(image, image_x, image_y)
-    love.graphics.circle("line", image_x, image_y, 2)
-    love.graphics.print(x .. "," .. y, image_x, image_y)
+    --love.graphics.rectangle('line', image_x, image_y, 64, 32)
+    
+    local vertices = {
+
+        image_x + (tileset.block_width / 2),
+        image_y,
+        image_x + tileset.block_width,
+        image_y + (tileset.block_height / 2),
+        image_x + (tileset.block_width / 2),
+        image_y + tileset.block_height,
+        image_x,
+        image_y + (tileset.block_height / 2),
+
+        -- image_x,
+        -- image_y - (tileset.block_height / 2),
+        -- image_x + (tileset.block_width / 2),
+        -- image_y,
+        -- image_x,
+        -- image_y + (tileset.block_height / 2),
+        -- image_x - (tileset.block_width / 2),
+        -- image_y
+    }
+    love.graphics.polygon("line", vertices)
+
+
+    -- love.graphics.circle("line", image_x, image_y, 2)
+    -- love.graphics.print(x .. "," .. y, image_x, image_y)
 end
 
 -- Base off of the draw tile - work in progress
@@ -46,13 +71,13 @@ function Canvas:highlightGridItemFromMouseCoord(x, y, width, height, camera, til
     -- 1,2
     -- local example_x = 600
     -- local example_y = 96
-    local a = (x - (self.grid_x + (y))) -- we need to account for y too as it impacts the offset of grid_x) - aha
+    -- local a = (x - ((self.grid_x) + ((y - self.grid_y ) * 2))) -- we need to account for y too as it impacts the offset of grid_x) - aha
+    -- local a = math.ceil(((((self.grid_x + tileset.block_width) - ((y - self.grid_y) * 2))) - x) / tileset.block_width) -- 9 to -9
+    local grid_size = {tileset.block_width * map.grid_size, tileset.block_height * map.grid_size}
+    local a = x
     local b = y
-
-    print(a)
-
     love.graphics.print(
-        a,
+        self.grid_x .. ' , '.. self.grid_y .. ' | ' .. x .. ' , ' .. y .. ' | ' .. a .. ' , ' .. b .. ' | ' .. grid_size[1] .. ' , ' .. grid_size[2],
         10 / camera.zoom_level,
         10 / camera.zoom_level,
         0,

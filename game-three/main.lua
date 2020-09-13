@@ -11,7 +11,7 @@ love.window.setMode(1200, 800, {resizable = true})
 
 -- Tileset, Map, Camera, Canvas and Keyboard instantiation
 local tileset = Tileset()
-local map = Map()
+local map = Map(4)
 local camera = Camera()
 local canvas = Canvas()
 local keyboard = Keyboard()
