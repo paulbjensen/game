@@ -11,7 +11,7 @@ love.window.setMode(1200, 800, {resizable = true})
 
 -- Tileset, Map, Camera, Canvas and Keyboard instantiation
 local tileset = Tileset()
-local map = Map(4)
+local map = Map(10)
 local camera = Camera()
 local canvas = Canvas()
 local keyboard = Keyboard()
@@ -40,5 +40,5 @@ function love.draw()
 	local coords = camera:getMousePosition()
 	local width = 64 --/ camera.zoom_level
 	local height = 32 --/ camera.zoom_level
-	canvas:highlightGridItemFromMouseCoord(coords[1], coords[2], width, height, camera, tileset, map)
+	-- canvas:highlightGridItemFromMouseCoord(coords[1], coords[2], width, height, camera, tileset, map)
 end
