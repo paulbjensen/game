@@ -9,9 +9,24 @@
         - all of the transactions of the business
     - The stock supplies of the shop
 ]]
+local Business = require "lib.business"
 local Object = require "lib.helpers.classic"
 local Game = Object:extend()
 
+--[[
+    A game has...
+
+    - A shop
+    - That shop has a bank account
+    - The bank account has a bunch of transactions
+    -   Money coming in...
+    -   Money going out...
+    -   We need a way to represent that
+    -   And to represent it in a way that makes sense
+    - So when a Shop buys product stocks
+    -   The cost of that is recorded in the bank account
+
+]]
 function Game:new()
     self.bank_balance = 0
     self.stock = 0

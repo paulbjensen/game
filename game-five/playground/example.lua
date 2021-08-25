@@ -1,4 +1,3 @@
---require("lib.helpers.ilua")
 local Game = require("lib.game")
 
 local game = Game()
